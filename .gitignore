@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# 과거 시세 캐시 (첫 실행 시 자동 다운로드)
+data/*.parquet
+data/*.csv
+
+# Streamlit
+.streamlit/secrets.toml
+
+*.log
+.DS_Store
