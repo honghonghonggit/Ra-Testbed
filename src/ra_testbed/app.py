@@ -1,11 +1,15 @@
 import sys
 import pathlib
 
-# 배포 환경(Streamlit Cloud)에서 설치본 staleness와 무관하게 항상 라이브 소스를
-# import하도록 src/ 디렉터리를 경로 맨 앞에 둔다. (this file: src/ra_testbed/app.py)
+# 배포 환경(Streamlit Cloud)에서 설치본(site-packages) staleness와 무관하게 항상
+# 라이브 소스를 import하도록 강제한다. (this file: src/ra_testbed/app.py → _SRC=src/)
+# 1) src/를 경로 맨 앞에 둔다. 2) startup 때 stale 설치본이 먼저 캐시됐을 수 있으므로
+#    ra_testbed 모듈 캐시를 비워 src/에서 재해석되게 한다.
 _SRC = pathlib.Path(__file__).resolve().parent.parent
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
+for _m in [m for m in sys.modules if m == "ra_testbed" or m.startswith("ra_testbed.")]:
+    del sys.modules[_m]
 
 import json
 
