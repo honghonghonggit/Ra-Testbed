@@ -1,3 +1,12 @@
+import sys
+import pathlib
+
+# 배포 환경(Streamlit Cloud)에서 설치본 staleness와 무관하게 항상 라이브 소스를
+# import하도록 src/ 디렉터리를 경로 맨 앞에 둔다. (this file: src/ra_testbed/app.py)
+_SRC = pathlib.Path(__file__).resolve().parent.parent
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
 import json
 
 import streamlit as st
