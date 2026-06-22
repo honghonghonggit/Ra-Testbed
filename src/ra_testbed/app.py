@@ -148,11 +148,17 @@ def render_reliability(metrics: dict):
     st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
 
 
-def friendly_engine_error(e: Exception):
-    """엔진 예외를 친절한 메시지로 변환해 표시하고 중단."""
+def friendly_engine_error(e: Exception, effective_start: str = None):
+    """엔진 예외를 친절한 메시지로 변환해 표시하고 중단.
+
+    effective_start: 실제 백테스트가 사용한 시작일. 시나리오 버튼은 사이드바 날짜가
+    아니라 시나리오 구간(예: 2008→2007-10-01)으로 실행하므로, 그 값을 받아야
+    국내 ETF 2008 케이스의 전용 안내가 올바르게 뜬다. (미지정 시 사이드바 start 사용)
+    """
     msg = str(e)
+    effective_start = effective_start if effective_start is not None else start
     kr_tickers = [t for t in tickers if t.endswith(".KS")]
-    if "Not enough trading days" in msg and kr_tickers and pd.Timestamp(start) < pd.Timestamp("2010-01-01"):
+    if "Not enough trading days" in msg and kr_tickers and pd.Timestamp(effective_start) < pd.Timestamp("2010-01-01"):
         st.error(
             f"**데이터 없음**: 선택한 국내 ETF({', '.join(kr_tickers)})는 "
             f"2010년 이전 데이터가 제공되지 않습니다. "
@@ -264,7 +270,7 @@ def render_single():
                 strategy=strategy, tickers=tickers, start=run_start, end=run_end, **engine_kwargs
             ).run()
         except Exception as e:
-            friendly_engine_error(e)
+            friendly_engine_error(e, effective_start=run_start)
 
     pv = result.portfolio_values
     m = result.metrics
