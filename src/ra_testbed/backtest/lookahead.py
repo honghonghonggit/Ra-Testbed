@@ -107,12 +107,16 @@ def wrap_strategy_as_audit(strategy) -> AuditFn:
 def lookahead_cheating_audit(prices: pd.DataFrame, as_of: pd.Timestamp) -> dict[str, float]:
     """의도적으로 미래를 훔쳐보는 컨닝 전략 (가드레일 시연용).
 
-    as_of를 무시하고 패널의 마지막 행(미래 봉)을 봐서, 가장 많이 오른 자산에
-    100% 몰아준다. 가드레일이 반드시 DETECTED로 잡아내야 한다.
+    as_of를 무시하고 패널의 '미래' 마지막 구간 모멘텀에 비례해 비중을 배분한다.
+    출력이 미래 봉 값에 연속적으로 의존하므로, 가드레일이 미래 구간을 교란하면
+    반드시 비중이 달라져 DETECTED로 잡힌다.
     """
     tickers = list(prices.columns)
-    first = prices.iloc[0]
-    last = prices.iloc[-1]  # ← 미래 마지막 봉을 참조 (lookahead!)
-    total_return = (last / first - 1.0)
-    best = total_return.idxmax()
-    return {t: (1.0 if t == best else 0.0) for t in tickers}
+    window = min(5, len(prices) - 1)
+    # ← 미래 마지막 봉(iloc[-1])과 그 직전 봉을 참조 (lookahead!)
+    recent = (prices.iloc[-1] / prices.iloc[-1 - window] - 1.0).clip(lower=0.0)
+    total = float(recent.sum())
+    if total <= 0:
+        w = 1.0 / len(tickers)
+        return {t: w for t in tickers}
+    return {t: float(recent[t] / total) for t in tickers}

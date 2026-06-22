@@ -76,8 +76,8 @@ class TestDetectLookahead:
 
 
 class TestCheatingAudit:
-    def test_allocates_fully_to_one_asset(self):
+    def test_weights_sum_to_one_and_nonnegative(self):
         prices = make_prices()
         weights = lookahead_cheating_audit(prices, prices.index[200])
         assert abs(sum(weights.values()) - 1.0) < 1e-9
-        assert sorted(weights.values())[-1] == 1.0  # 한 자산에 100%
+        assert all(w >= 0 for w in weights.values())
