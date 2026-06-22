@@ -32,7 +32,7 @@ Streamlit 대시보드 (전략 프리셋·JSON 입력 · 시나리오 버튼 · 
 
 ## 데모
 
-*GIF 추가 예정*
+**라이브 앱**: [https://ra-testbed-mmx3su4hwlbqrmwlc8yf3v.streamlit.app](https://ra-testbed-mmx3su4hwlbqrmwlc8yf3v.streamlit.app)
 
 ---
 
