@@ -39,7 +39,7 @@ from ra_testbed.backtest.regimes import (
     RECOVERY,
 )
 from ra_testbed.data.loader import DataLoader
-from ra_testbed.report.reliability import evaluate as evaluate_reliability, PASS, WARN
+from ra_testbed.report.reliability import evaluate as evaluate_reliability, PASS
 
 st.set_page_config(page_title="RA Testbed", layout="wide")
 st.title("로보어드바이저 신뢰성 검증 테스트베드")
@@ -125,10 +125,10 @@ def regime_segments(regimes: pd.Series):
     return segments
 
 
-def load_regimes(benchmark_ticker, index):
+def load_regimes(benchmark_ticker, index, period_start, period_end):
     """벤치마크 종가로 국면을 분류해 주어진 인덱스에 맞춰 반환 (실패 시 None)."""
     try:
-        bench_close, _ = DataLoader([benchmark_ticker], cache_dir=CACHE_DIR).load(start, end)
+        bench_close, _ = DataLoader([benchmark_ticker], cache_dir=CACHE_DIR).load(period_start, period_end)
         return classify_regimes(bench_close[benchmark_ticker]).reindex(index).ffill()
     except Exception:
         return None
@@ -260,9 +260,8 @@ def render_single():
 
     with st.spinner("데이터 로딩 및 백테스트 실행 중..."):
         try:
-            kwargs = {**engine_kwargs}
             result = BacktestEngine(
-                strategy=strategy, tickers=tickers, start=run_start, end=run_end, **kwargs
+                strategy=strategy, tickers=tickers, start=run_start, end=run_end, **engine_kwargs
             ).run()
         except Exception as e:
             friendly_engine_error(e)
@@ -280,12 +279,7 @@ def render_single():
 
     # 국면 분류 (벤치마크 = 첫 티커) — 시나리오 구간에선 run_start/run_end 기준
     benchmark_ticker = tickers[0]
-    regimes = None
-    try:
-        bench_close, _ = DataLoader([benchmark_ticker], cache_dir=CACHE_DIR).load(run_start, run_end)
-        regimes = classify_regimes(bench_close[benchmark_ticker]).reindex(pv.index).ffill()
-    except Exception:
-        regimes = None
+    regimes = load_regimes(benchmark_ticker, pv.index, run_start, run_end)
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(
@@ -441,7 +435,7 @@ def render_guardrail():
         label = "정상 전략 (균등 비중, 엔진과 동일하게 신호일까지만 사용)"
     else:
         report = detect_lookahead(lookahead_cheating_audit, close, as_of)
-        label = "컨닝 전략 (신호일 무시, 미래 마지막 봉을 보고 최고 수익 자산에 100%)"
+        label = "컨닝 전략 (신호일 무시, 미래 구간 모멘텀에 비례 배분)"
 
     st.markdown(f"**검사 대상:** {label}")
     if report.status == CLEAN:

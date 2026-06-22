@@ -95,7 +95,7 @@ BacktestEngine(transaction_cost_bps=10)  # 기본 10bps = 0.1%
 BacktestEngine(tickers=["SPY", "TLT", "GLD"], ...)
 
 # Phase 2: 동일한 엔진으로 국내 ETF 적용 (케이스 스터디)
-BacktestEngine(tickers=["069500", "114820"], ...)
+BacktestEngine(tickers=["069500.KS", "114260.KS", "132030.KS"], ...)
 ```
 
 **기본 유니버스로 SPY/TLT/GLD를 선택한 이유:**
@@ -235,9 +235,8 @@ Phase 1의 엔진은 신호일까지의 데이터(`close.loc[:signal_date]`)만 
 ```bash
 # 의존성 설치
 pip install -r requirements.txt
-pip install -e .   # 패키지 편집 모드 설치 (테스트용)
 
-# 단위 테스트
+# 단위 테스트 (pyproject의 pythonpath=["src"] 설정으로 별도 설치 없이 실행됨)
 pytest
 
 # Streamlit 앱 실행
