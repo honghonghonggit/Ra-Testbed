@@ -8,30 +8,6 @@
 
 ## 파이프라인
 
-```
-전략 (Strategy ABC plug-in)
-        │
-        ▼
-과거 시장 데이터 ─── yfinance → parquet 캐시
-        │
-        ▼
-백테스트 엔진
-  ├─ 신호일 t : prices.loc[:t] → generate_weights()
-  ├─ 체결일 t+1 : 다음 거래일 시가(Open)로 매매
-  ├─ 거래비용 반영 (bps 단위, 비중 변화에 비례)
-  └─ 리밸런싱 주기 적용 (M / Q / D)
-        │
-        ▼
-리스크 지표 (CAGR · MDD · Sharpe · 변동성)
-        │
-        ├─ 시장 국면 분류 (상승장 / 하락장 / 회복) → 국면별 성과 분해
-        ├─ 신뢰성 리포트 (지표별 통과/경고 판정)
-        ▼
-Streamlit 대시보드 (전략 프리셋·JSON 입력 · 시나리오 버튼 · 국면 음영)
-```
-
-## 파이프라인 다이어그램
-
 ![pipeline](docs/pipeline.png)
 
 ## 데모
