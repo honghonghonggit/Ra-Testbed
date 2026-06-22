@@ -30,6 +30,10 @@
 Streamlit 대시보드 (전략 프리셋·JSON 입력 · 시나리오 버튼 · 국면 음영)
 ```
 
+## 파이프라인 다이어그램
+
+![pipeline](docs/pipeline.png)
+
 ## 데모
 
 **라이브 앱**: [https://ra-testbed-mmx3su4hwlbqrmwlc8yf3v.streamlit.app](https://ra-testbed-mmx3su4hwlbqrmwlc8yf3v.streamlit.app)
