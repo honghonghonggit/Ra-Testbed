@@ -45,7 +45,9 @@ st.set_page_config(page_title="RA Testbed", layout="wide")
 st.title("로보어드바이저 신뢰성 검증 테스트베드")
 st.caption("투자 전략의 과거 성과를 백테스트하여 신뢰성 지표를 자동 계산합니다.")
 
-CACHE_DIR = "data/"
+# 번들된 시세 캐시(data/)는 레포 루트 기준 절대 경로로 참조한다 — 배포 환경의
+# 작업 디렉터리가 레포 루트가 아니어도 항상 찾도록. (_SRC=src/ → 레포 루트=_SRC.parent)
+CACHE_DIR = str(_SRC.parent / "data")
 
 ASSET_PRESETS = {
     "미국 ETF (SPY/TLT/GLD)": "SPY,TLT,GLD",
