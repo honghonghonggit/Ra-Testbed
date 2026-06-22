@@ -9,8 +9,16 @@ venv/
 env/
 
 # 과거 시세 캐시 (첫 실행 시 자동 다운로드)
+# 단, 기본 프리셋(미국/국내 ETF) 시세는 레포에 포함한다 — 배포 환경(Streamlit Cloud)의
+# 공유 IP가 yfinance 조회에 제한될 수 있어, 기본 유니버스는 캐시를 번들해 항상 동작하게 한다.
 data/*.parquet
 data/*.csv
+!data/SPY.parquet
+!data/TLT.parquet
+!data/GLD.parquet
+!data/069500.KS.parquet
+!data/114260.KS.parquet
+!data/132030.KS.parquet
 
 # Streamlit
 .streamlit/secrets.toml

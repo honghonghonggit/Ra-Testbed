@@ -156,6 +156,12 @@ def friendly_engine_error(e: Exception):
             f"2010년 이전 데이터가 제공되지 않습니다. "
             f"**2008 금융위기** 시나리오는 미국 ETF 프리셋(SPY/TLT/GLD)으로 변경 후 실행해주세요."
         )
+    elif "Not enough trading days" in msg:
+        st.error(
+            f"**시세 데이터를 불러오지 못했습니다** ({', '.join(tickers)}). "
+            f"기본 프리셋(미국·국내 ETF)은 시세가 레포에 포함돼 항상 동작합니다. "
+            f"직접 입력한 티커는 외부 데이터 조회가 필요하며, 배포 환경에서 일시적으로 제한될 수 있습니다."
+        )
     else:
         st.error(f"백테스트 오류: {msg}")
     st.stop()
