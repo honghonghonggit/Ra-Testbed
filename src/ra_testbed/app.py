@@ -183,7 +183,16 @@ with st.spinner("데이터 로딩 및 백테스트 실행 중..."):
         )
         result = engine.run()
     except Exception as e:
-        st.error(f"백테스트 오류: {e}")
+        msg = str(e)
+        kr_tickers = [t for t in tickers if t.endswith(".KS")]
+        if "Not enough trading days" in msg and kr_tickers and pd.Timestamp(start) < pd.Timestamp("2010-01-01"):
+            st.error(
+                f"**데이터 없음**: 선택한 국내 ETF({', '.join(kr_tickers)})는 "
+                f"2010년 이전 데이터가 제공되지 않습니다. "
+                f"**2008 금융위기** 시나리오는 미국 ETF 프리셋(SPY/TLT/GLD)으로 변경 후 실행해주세요."
+            )
+        else:
+            st.error(f"백테스트 오류: {msg}")
         st.stop()
 
 pv = result.portfolio_values
